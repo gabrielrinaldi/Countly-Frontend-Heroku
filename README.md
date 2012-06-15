@@ -16,6 +16,13 @@ Below you can find Countly SDK repositories;
 5. Change server on countly.config.js (`countlyCommon.READ_API_URL = "http://your_api_server/o"`)
 6. Push to Heroku and you are done
 
+After installation, for each app you create if you want to have an icon you have to create and add it manually.
+
+1. Create the application
+2. Get the app key (inspect the image to see the png file name)
+3. Create a png file with a size of 22x22 named after your app ID
+4. Put it on public/appimages and push to Heroku
+
 ##Frontend
 
 Quick overview of some important files and directories included in this package;

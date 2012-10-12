@@ -304,7 +304,12 @@ app.post('/forgot', function(req, res, next) {
 			
 				countlyDb.collection('password_reset').insert({"prid": prid, "user_id": member._id, "timestamp": timestamp}, {safe: true}, function(err, password_reset){
 					
-					var transport = nodemailer.createTransport("Sendmail", "/usr/sbin/sendmail"),
+					var transport = nodemailer.createTransport("SMTP", {
+						host: "smtp.sendgrid.net",
+    					auth: {
+        					user: process.env.SENDGRID_USERNAME,
+        					pass: process.env.SENDGRID_PASSWORD
+    					}),
 						userName = (member.full_name).split(" "),
 						message = {
 							from: '"Countly"',
@@ -736,7 +741,12 @@ app.post('/users/create', function(req, res, next) {
 	function createUser() {
 		countlyDb.collection('members').insert(newUser, {safe: true}, function(err, user) {
 			if (user && !err) {
-				var transport = nodemailer.createTransport("Sendmail", "/usr/sbin/sendmail"),
+				var transport = nodemailer.createTransport("SMTP", {
+					host: "smtp.sendgrid.net",
+					auth: {
+    					user: process.env.SENDGRID_USERNAME,
+    					pass: process.env.SENDGRID_PASSWORD
+					}),
 					userName = (req.body.full_name).split(" "),
 					message = {
 						from: '"Countly"',
@@ -844,7 +854,12 @@ app.post('/users/update', function(req, res, next) {
 		if (user && !err) {
 			
 			if (sendNotificationEmail) {		
-				var transport = nodemailer.createTransport("Sendmail", "/usr/sbin/sendmail"),
+				var transport = nodemailer.createTransport("SMTP", {
+					host: "smtp.sendgrid.net",
+					auth: {
+    					user: process.env.SENDGRID_USERNAME,
+    					pass: process.env.SENDGRID_PASSWORD
+					}),
 					userName = (req.body.full_name).split(" "),
 					message = {
 						from: '"Countly"',

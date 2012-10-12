@@ -16,12 +16,11 @@ Below you can find Countly SDK repositories;
 5. Change server on countly.common.js (`countlyCommon.READ_API_URL = "http://your_api_server/o"`)
 6. Push to Heroku and you are done
 
-After installation, for each app you create if you want to have an icon you have to create and add it manually.
+I am using S3 now for handling app icons. You have to setup your keys for it to work:
 
-1. Create the application
-2. Get the app key (inspect the image to see the png file name)
-3. Create a png file with a size of 22x22 named after your app ID
-4. Put it on public/appimages and push to Heroku
+1. Run `heroku config:add S3_ACCESS_KEY=key S3_ACCESS_SECRET=secret S3_BUCKET=bucket`
+2. Update the path with your url in the files (Search for `appimage`)
+3. Make sure the file is 25x25 (had to remove imagemagick)
 
 ##Frontend
 

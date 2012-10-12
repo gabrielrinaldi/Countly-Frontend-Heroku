@@ -603,12 +603,8 @@ app.post('/apps/icon', function(req, res) {
 		return true;
 	}
 
-	console.log('Here we go!');
-	
 	client.putFile(tmp_path, '/appimages/' + req.body.app_image_id + '.png', { 'x-amz-acl': 'public-read' },  function(s3_err, s3_res) {
   		if (200 == s3_res.statusCode) {
-  			console.log('Gogogo');
-
     		res.send('https://s3.amazonaws.com/' + process.env.S3_BUCKET + '/appimages/' + req.body.app_image_id + '.png');
   		} else {
   			console.log('Error: %s', s3_res.statusCode);

@@ -7,6 +7,7 @@ var http = require('http'),
 	fs = require('fs'),
 	im = require('imagemagick'),
 	nodemailer = require('nodemailer'),
+	client = knox.createClient({ key: process.env.S3_ACCESS_KEY, secret: process.env.S3_ACCESS_SECRET, bucket: process.env.S3_BUCKET}),
 	countlyDb = mongo.db(process.env.COUNTLYDB);
 	
 function sha1Hash(str, addSalt) {
@@ -521,8 +522,10 @@ app.post('/apps/delete', function(req, res, next) {
 			return false;
 		}
 	
-		var iconPath = __dirname + '/public/appimages/' + req.body.app_id + ".png";
-		fs.unlink(iconPath, function() {});
+		client.del('/appimages/' + req.body.app_id + ".png").on('response', function(res){
+  			console.log(res.statusCode);
+  			console.log(res.headers);
+		}).end();
 	
 		countlyDb.collection('members').update({}, {$pull: {"apps": req.body.app_id, "admin_of": req.body.app_id, "user_of": req.body.app_id,}, }, {multi: true}, function(err, app) {});
 		countlyDb.collection('sessions').remove({"_id": countlyDb.ObjectID(req.body.app_id)});
@@ -592,7 +595,6 @@ app.post('/apps/icon', function(req, res) {
 	}
 
 	var tmp_path = req.files.app_image.path,
-		target_path = __dirname + '/public/appimages/' + req.body.app_image_id + ".png",
 		type = 	req.files.app_image.type;
 	
 	if (type != "image/png" && type != "image/gif" && type != "image/jpeg") {
@@ -600,18 +602,28 @@ app.post('/apps/icon', function(req, res) {
 		res.send(false);
 		return true;
 	}
+
+	im.crop({
+		srcPath: tmp_path,
+		dstPath: tmp_path,
+		format: 'png',
+		width: 25
+	}, function(err, stdout, stderr){});
 	
-	fs.rename(tmp_path, target_path, function(err) {
-		fs.unlink(tmp_path, function() {});
-		im.crop({
-		  srcPath: target_path,
-		  dstPath: target_path,
-		  format: 'png',
-		  width: 25
-		}, function(err, stdout, stderr){});
-		
-		res.send("/appimages/" + req.body.app_image_id + ".png");
+	var s3 = client.put('/appimages/' + req.body.app_image_id + '.png', {
+    	'Content-Length': req.files.app_image.length,
+    	'Content-Type': type,
+    	'x-amz-acl': 'public-read'
 	});
+	
+	s3.on('response', function(s3_res){
+  		if (200 == s3_res.statusCode) {
+    		console.log('Image saved to %s', s3.url);
+
+    		res.send(s3.url);
+  		}
+	});
+	s3.end(tmp_path);
 });
 
 app.post('/user/settings', function(req, res, next) {

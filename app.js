@@ -5,7 +5,6 @@ var http = require('http'),
 	mongo = require('mongoskin'),
 	crypto = require('crypto'),
 	fs = require('fs'),
-	im = require('imagemagick'),
 	nodemailer = require('nodemailer'),
 	knox = require('knox'),
 	client = knox.createClient({ key: process.env.S3_ACCESS_KEY, secret: process.env.S3_ACCESS_SECRET, bucket: process.env.S3_BUCKET}),
@@ -604,27 +603,20 @@ app.post('/apps/icon', function(req, res) {
 		return true;
 	}
 
-	im.crop({
-		srcPath: tmp_path,
-		dstPath: tmp_path,
-		format: 'png',
-		width: 25
-	}, function(err, stdout, stderr){});
+	console.log('Here we go!');
 	
-	var s3 = client.put('/appimages/' + req.body.app_image_id + '.png', {
-    	'Content-Length': req.files.app_image.length,
-    	'Content-Type': type,
-    	'x-amz-acl': 'public-read'
-	});
-	
-	s3.on('response', function(s3_res){
+	client.putFile(tmp_path, '/appimages/' + req.body.app_image_id + '.png', { 'x-amz-acl': 'public-read' },  function(s3_err, s3_res) {
   		if (200 == s3_res.statusCode) {
-    		console.log('Image saved to %s', s3.url);
+  			console.log('Gogogo');
 
-    		res.send(s3.url);
+    		res.send('https://s3.amazonaws.com/' + process.env.S3_BUCKET + '/appimages/' + req.body.app_image_id + '.png');
+  		} else {
+  			console.log('Error: %s', s3_res.statusCode);
+  			console.log('Error: %s', s3_err);
+
+  			res.send(false);			
   		}
 	});
-	s3.end(tmp_path);
 });
 
 app.post('/user/settings', function(req, res, next) {

@@ -13,7 +13,6 @@
     "time": "0.8.2",
     "request": "2.9.202",
     "nodemailer": "0.3.20",
-    "imagemagick": "0.1.2",
     "express-expose": "0.2.2",
     "express": "2.5.9",
     "ejs": "0.7.1",

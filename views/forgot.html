@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+   ______                  __  __     
+  / ____/___  __  ______  / /_/ /_  __
+ / /   / __ \/ / / / __ \/ __/ / / / /
+/ /___/ /_/ / /_/ / / / / /_/ / /_/ / 
+\____/\____/\__,_/_/ /_/\__/_/\__, /  
+              http://count.ly/____/   
+-->
+<html>
+<head>
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu:400,500&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+	<link href='/stylesheets/pre-login/main.css?v12.09' rel='stylesheet' type='text/css'>
+	<link rel="icon" type="image/png" href="/images/favicon.png">
+	<title>Countly</title>
+</head>
+<body>
+	 <% if (message){ %>
+		<div id="message"></div>
+	 <% } %>
+	<div id="top-container">
+		<a class="top-button" href="http://count.ly">Countly</a>
+		<div class="top-button" id="select-lang">
+			<div id="active-lang">EN</div>
+			<div id="langs">
+				<div class="group">
+					<a data-language-code="de" class="item">Deutsch</a>
+					<a data-language-code="en" class="item">English</a>
+					<a data-language-code="es" class="item">Español</a>
+					<a data-language-code="fr" class="item">Français</a>
+					<a data-language-code="it" class="item">Italiano</a>
+				</div>
+				<div class="group">
+					<a data-language-code="nl" class="item">Nederlands</a>
+					<a data-language-code="tr" class="item">Türkçe</a>
+					<a data-language-code="zh" class="item">中文</a>
+					<a data-language-code="ja" class="item">日本語</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="forgot-form">
+		<div id="forgot-left">
+			<div id="forgot-logo"></div>
+		</div>
+		<div style="font-size: 18px; color: #eee; margin-bottom: 39px; text-align: center; text-shadow: 0 -1px #000;" data-localize="forgot.explanation"></div>
+		<div id="create-account">
+			<form method="POST">
+				<div>
+					<input style="width:300px;" autocapitalize="off" type="text" name="email" placeholder="Email" data-localize="placeholder.email"/>
+				</div>
+				<div>
+					<input type="hidden" value="<%= csrf %>" name="_csrf" />
+					<input id="login-button" value="Send" type="submit" data-localize="forgot.button"/>
+				</div>
+			</form>
+		</div>
+	</div>
+	<script language="javascript" type="text/javascript" src="/javascripts/jquery-1.8.2.min.js"></script>
+	<script language="javascript" type="text/javascript" src="/javascripts/prefixfree.min.js"></script>
+	<script language="javascript" type="text/javascript" src="/javascripts/jquery.noisy.min.js"></script>
+	<script language="javascript" type="text/javascript" src="/javascripts/store+json2.min.js"></script>
+	<script language="javascript" type="text/javascript" src="/javascripts/jquery.i18n.properties-min-1.0.9.js"></script>
+	<script language="javascript" type="text/javascript" src="/javascripts/pre-login.js?v12.09"></script>
+	<script>
+		$(document).ready(function() {
+			<% if (message){ %>
+				showMessage("<%= message %>");
+			<% } %>
+			document.title = "Countly | " + jQuery.i18n.map["forgot.title"];
+		});
+		
+		$(document).bind('clyLangChange', function() {
+			document.title = "Countly | " + jQuery.i18n.map["forgot.title"];
+		});
+	</script>
+</body>
+</html>

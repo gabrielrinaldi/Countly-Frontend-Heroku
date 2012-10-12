@@ -2,13 +2,17 @@
     
 	//Private Properties
 	var _periodObj = {},
-		_sessionDb = {};
+		_sessionDb = {},
+		_durations = [],
+		_activeAppKey = 0;
      
     //Public Methods
 	countlySession.initialize = function () {
 		_periodObj = countlyCommon.periodObj;
 		
 		if (!countlyCommon.DEBUG) {
+			_activeAppKey = countlyCommon.ACTIVE_APP_KEY;
+			
 			return $.ajax({
 				type: "GET",
 				url: countlyCommon.READ_API_URL,
@@ -18,7 +22,8 @@
 				},
 				dataType: "jsonp",
 				success: function(json) {
-					_sessionDb = jQuery.parseJSON(json);
+					_sessionDb = json;
+					setMeta();
 				}
 			});
 		} else {		
@@ -26,6 +31,39 @@
 			return true;
 		}
 	};
+	
+	countlySession.refresh = function () {
+		if (!countlyCommon.DEBUG) {
+			
+			if (_activeAppKey != countlyCommon.ACTIVE_APP_KEY) {
+				_activeAppKey = countlyCommon.ACTIVE_APP_KEY;
+				return countlySession.initialize();
+			}
+			
+			return $.ajax({
+				type: "GET",
+				url: countlyCommon.READ_API_URL,
+				data: {
+					"app_key" : countlyCommon.ACTIVE_APP_KEY,
+					"method" : "sessions",
+					"action" : "refresh"
+				},
+				dataType: "jsonp",
+				success: function(json) {
+					countlyCommon.extendDbObj(_sessionDb, json);
+					setMeta();
+				}
+			});
+		} else {		
+			_sessionDb = {"2012": {}};
+			return true;
+		}
+	};
+	
+	countlySession.reset = function() {
+		_sessionDb = {};
+		setMeta();
+	}
 	
 	countlySession.getSessionData = function() {
 		
@@ -54,10 +92,36 @@
 				currentUnique += tmp_x["u"];
 			}
 			
+			var tmpUniqObj,
+				tmpCurrentUniq = 0;
+			
+			for (var i = 0; i < (_periodObj.uniquePeriodCheckArr.length); i++) {
+				tmpUniqObj = countlyCommon.getDescendantProp(_sessionDb, _periodObj.uniquePeriodCheckArr[i]);
+				tmpUniqObj = countlySession.clearSessionObject(tmpUniqObj);
+				tmpCurrentUniq += tmpUniqObj["u"];
+			}
+			
+			if (currentUnique > tmpCurrentUniq) {
+				currentUnique = tmpCurrentUniq;
+			}
+			
 			for (var i = 0; i < (_periodObj.previousUniquePeriodArr.length); i++) {
 				tmp_y = countlyCommon.getDescendantProp(_sessionDb, _periodObj.previousUniquePeriodArr[i]);
 				tmp_y = countlySession.clearSessionObject(tmp_y);
 				previousUnique += tmp_y["u"];
+			}
+			
+			var tmpUniqObj2,
+				tmpPreviousUniq = 0;
+			
+			for (var i = 0; i < (_periodObj.previousUniquePeriodCheckArr.length); i++) {
+				tmpUniqObj2 = countlyCommon.getDescendantProp(_sessionDb, _periodObj.previousUniquePeriodCheckArr[i]);
+				tmpUniqObj2 = countlySession.clearSessionObject(tmpUniqObj2);
+				tmpPreviousUniq += tmpUniqObj2["u"];
+			}
+			
+			if (previousUnique > tmpPreviousUniq) {
+				previousUnique = tmpPreviousUniq;
 			}
 		
 			for (var i = 0; i < (_periodObj.currentPeriodArr.length); i++) {
@@ -138,13 +202,13 @@
 					"sparkline": sparkLines.returning
 				},
 				"total-duration": {
-					"total": (sessionDuration.toFixed(1)) + "min",
+					"total": (sessionDuration.toFixed(1)) + jQuery.i18n.map["common.minute.abrv"],
 					"change": changeDuration.percent,
 					"trend": changeDuration.trend,
 					"sparkline": ""
 				},
 				"avg-duration-per-session": {
-					"total": (durationPerUser.toFixed(1)) + "min",
+					"total": (durationPerUser.toFixed(1)) + jQuery.i18n.map["common.minute.abrv"],
 					"change": changeDurationPerUser.percent,
 					"trend": changeDurationPerUser.trend,
 					"sparkline": sparkLines["avg-time"]
@@ -172,14 +236,14 @@
 		//Update the current period object in case selected date is changed
 		_periodObj = countlyCommon.periodObj;
 	
-		return countlyCommon.extractRangeData(_sessionDb, "durations", _sessionDb["d-ranges"], countlySession.explainDurationRange);
+		return countlyCommon.extractRangeData(_sessionDb, "durations", _durations, countlySession.explainDurationRange);
 	}
 	
 	countlySession.getSessionDP = function() {
 	
-		var chartData = [ { data: [], label: "Total Sessions" }, 
-						  { data: [], label: "New Sessions" }, 
-						  { data: [], label: "Unique Sessions" } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.table.total-sessions"] }, 
+						  { data: [], label: jQuery.i18n.map["common.table.new-sessions"] }, 
+						  { data: [], label: jQuery.i18n.map["common.table.unique-sessions"] } ],
 			dataProps = [
 				{ name: "t" },
 				{ name: "n" },
@@ -191,8 +255,14 @@
 
 	countlySession.getSessionDPTotal = function() {
 	
-		var chartData = [ { data: [], label: "Total Sessions", color: '#333933' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.table.total-sessions"], color: '#DDDDDD', mode: "ghost" },
+						  { data: [], label: jQuery.i18n.map["common.table.total-sessions"], color: '#333933' } ],
 			dataProps = [
+				{ 
+					name: "pt",
+					func: function(dataObj) { return dataObj["t"] },
+					period: "previous"
+				},
 				{ name: "t" }
 			];
 			
@@ -201,9 +271,9 @@
 	
 	countlySession.getUserDP = function() {
 		
-		var chartData = [ { data: [], label: "Total Users" }, 
-						  { data: [], label: "New Users" }, 
-						  { data: [], label: "Returning Users" } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.table.total-users"] }, 
+						  { data: [], label: jQuery.i18n.map["common.table.new-users"] }, 
+						  { data: [], label: jQuery.i18n.map["common.table.returning-users"] } ],
 			dataProps = [
 				{ name: "u" },
 				{ name: "n" },
@@ -218,21 +288,33 @@
 	
 	countlySession.getUserDPActive = function() {
 		
-		var chartData = [ { data: [], label: "Total Users", color: '#333933' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.table.total-users"], color: '#DDDDDD', mode: "ghost" },
+						  { data: [], label: jQuery.i18n.map["common.table.total-users"], color: '#333933' } ],
 			dataProps = [
+				{ 
+					name: "pt",
+					func: function(dataObj) { return dataObj["u"] },
+					period: "previous"
+				},
 				{ 
 					name: "t",
 					func: function(dataObj) { return dataObj["u"] }
 				}
 			];
-			
+
 		return countlyCommon.extractChartData(_sessionDb, countlySession.clearSessionObject, chartData, dataProps);
 	};
 	
 	countlySession.getUserDPNew = function() {
 		
-		var chartData = [ { data: [], label: "New Users", color: '#333933' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.table.new-users"], color: '#DDDDDD', mode: "ghost"},
+						  { data: [], label: jQuery.i18n.map["common.table.new-users"], color: '#333933' } ],
 			dataProps = [
+				{ 
+					name: "pn",
+					func: function(dataObj) { return dataObj["n"] },
+					period: "previous"
+				},
 				{ name: "n" }
 			];
 			
@@ -241,8 +323,8 @@
 	
 	countlySession.getDurationDP = function() {
 		
-		var chartData = [ { data: [], label: "Total (min)", color: '#5995D9' }, 
-						  { data: [], label: "Average (min)", color: '#6AB650' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.graph.total-time"], color: '#5995D9' }, 
+						  { data: [], label: jQuery.i18n.map["common.graph.average-time"], color: '#6AB650' } ],
 			dataProps = [
 				{ 
 					name: "t", 
@@ -259,8 +341,14 @@
 
 	countlySession.getDurationDPAvg = function() {
 		
-		var chartData = [ { data: [], label: "Avg. Time Spent (min)", color: '#333933' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.graph.average-time"], color: '#DDDDDD', mode: "ghost"},
+						  { data: [], label: jQuery.i18n.map["common.graph.average-time"], color: '#333933' } ],
 			dataProps = [
+				{ 
+					name: "previous_average",
+					func: function(dataObj) { return ((dataObj["t"] == 0)? 0 : ((dataObj["d"] / dataObj["t"])/60).toFixed(1)); },
+					period: "previous"
+				},
 				{ 
 					name: "average",
 					func: function(dataObj) { return ((dataObj["t"] == 0)? 0 : ((dataObj["d"] / dataObj["t"])/60).toFixed(1)); }
@@ -272,8 +360,14 @@
 
 	countlySession.getEventsDP = function() {
 		
-		var chartData = [ { data: [], label: "Events Served", color: '#333933' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.graph.events-served"], color: '#DDDDDD', mode: "ghost"},
+						  { data: [], label: jQuery.i18n.map["common.graph.events-served"], color: '#333933' } ],
 			dataProps = [
+				{ 
+					name: "pe",
+					func: function(dataObj) { return dataObj["e"] },
+					period: "previous"
+				},
 				{ 
 					name: "e"
 				}
@@ -284,8 +378,14 @@
 	
 	countlySession.getEventsDPAvg = function() {
 		
-		var chartData = [ { data: [], label: "Avg. Events Served", color: '#333933' } ],
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.graph.avg-events-served"], color: '#DDDDDD', mode: "ghost"},
+						  { data: [], label: jQuery.i18n.map["common.graph.avg-events-served"], color: '#333933' } ],
 			dataProps = [
+				{ 
+					name: "previous_average",
+					func: function(dataObj) { return ((dataObj["u"] == 0)? 0 : ((dataObj["e"] / dataObj["u"]).toFixed(1))); },
+					period: "previous"
+				},
 				{ 
 					name: "average",
 					func: function(dataObj) { return ((dataObj["u"] == 0)? 0 : ((dataObj["e"] / dataObj["u"]).toFixed(1))); }
@@ -311,15 +411,19 @@
 	}
 		
 	countlySession.explainDurationRange = function(index) {
+		var sec = jQuery.i18n.map["common.seconds"],
+			min = jQuery.i18n.map["common.minutes"],
+			hr = jQuery.i18n.map["common.hour"];
+		
 		var durationRange = [
-			"0-10 seconds",
-			"11-30 seconds",
-			"31-60 seconds",
-			"1-3 minutes",
-			"3-10 minutes",
-			"10-30 minutes",
-			"30-60 minutes",
-			"> 1 hour"
+			"0-10 " + sec,
+			"11-30 " + sec,
+			"31-60 " + sec,
+			"1-3 " + min,
+			"3-10 " + min,
+			"10-30 " + min,
+			"30-60 " + min,
+			"> 1 " + hr
 		];
 	
 		return durationRange[index];
@@ -332,7 +436,7 @@
 			maxItems = 3,
 			totalPercent = 0;
 		
-		var chartData = [ { data: [], label: "Total Users" } ], 
+		var chartData = [ { data: [], label: jQuery.i18n.map["common.table.total-users"] } ], 
 			dataProps = [
 				{ 
 					name: "t",
@@ -405,4 +509,11 @@
 		return sparkLines;
 	}
 	
+	function setMeta() {
+		if (_sessionDb['meta']) {
+			_durations = (_sessionDb['meta']['d-ranges'])? _sessionDb['meta']['d-ranges'] : [];
+		} else {
+			_durations = [];
+		}
+	}
 }(window.countlySession = window.countlySession || {}, jQuery));

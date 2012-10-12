@@ -1,20 +1,22 @@
 {
   "name": "countlyapi",
-  "version": "12.05.0",
+  "version": "12.09.0",
   "engines": {
-    "node": "0.6.x",
+    "node": "0.8.x",
     "npm": "1.1.x"
   },
   "dependencies": {
+    "bson": "0.1.0",
     "moment": "1.6.2",
     "mongoskin": "0.3.6",
-    "geoip-lite": "1.0.8",
+    "geoip-lite-with-city-data": "1.0.5",
     "time": "0.8.2",
-    "request": "2.9.153",
+    "request": "2.9.202",
+    "nodemailer": "0.3.20",
     "imagemagick": "0.1.2",
     "express-expose": "0.2.2",
     "express": "2.5.9",
-    "ejs": "0.6.1",
+    "ejs": "0.7.1",
     "connect-mongodb": "1.1.3"
   }
 }

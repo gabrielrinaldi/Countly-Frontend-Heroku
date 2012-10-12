@@ -7,7 +7,7 @@ var http = require('http'),
 	fs = require('fs'),
 	im = require('imagemagick'),
 	nodemailer = require('nodemailer'),
-	countlyDb = mongo.dbmongo.db(process.env.COUNTLYDB);
+	countlyDb = mongo.db(process.env.COUNTLYDB);
 	
 function sha1Hash(str, addSalt) {
 	var salt = (addSalt)? new Date().getTime() : "";

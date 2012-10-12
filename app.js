@@ -62,7 +62,7 @@ app.configure(function() {
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'html');
 	app.set('view options', {layout: false});
-	app.use(express.bodyParser({uploadDir: __dirname + '/uploads'}));
+	app.use(express.bodyParser({uploadDir: __dirname + '/tmp'}));
 	app.use(express.cookieParser());
 	countlyDb.open(function(err, db) {
 		app.use(express.session({

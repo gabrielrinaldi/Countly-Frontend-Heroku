@@ -13,7 +13,7 @@ Below you can find Countly SDK repositories;
 2. Create a Heroku server (Cedar)
 3. Configure this repository to push to Heroku
 4. Run `heroku config:add COUNTLYDB=Your COUNTLYDB from the API server`
-5. Change server on countly.config.js (`countlyCommon.READ_API_URL = "http://your_api_server/o"`)
+5. Change server on countly.common.js (`countlyCommon.READ_API_URL = "http://your_api_server/o"`)
 6. Push to Heroku and you are done
 
 After installation, for each app you create if you want to have an icon you have to create and add it manually.

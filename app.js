@@ -7,6 +7,7 @@ var http = require('http'),
 	fs = require('fs'),
 	im = require('imagemagick'),
 	nodemailer = require('nodemailer'),
+	knox = require('knox'),
 	client = knox.createClient({ key: process.env.S3_ACCESS_KEY, secret: process.env.S3_ACCESS_SECRET, bucket: process.env.S3_BUCKET}),
 	countlyDb = mongo.db(process.env.COUNTLYDB);
 	

@@ -309,7 +309,7 @@ app.post('/forgot', function(req, res, next) {
     					auth: {
         					user: process.env.SENDGRID_USERNAME,
         					pass: process.env.SENDGRID_PASSWORD
-    					}),
+    					}}),
 						userName = (member.full_name).split(" "),
 						message = {
 							from: '"Countly"',
@@ -746,7 +746,7 @@ app.post('/users/create', function(req, res, next) {
 					auth: {
     					user: process.env.SENDGRID_USERNAME,
     					pass: process.env.SENDGRID_PASSWORD
-					}),
+					}}),
 					userName = (req.body.full_name).split(" "),
 					message = {
 						from: '"Countly"',
@@ -859,7 +859,7 @@ app.post('/users/update', function(req, res, next) {
 					auth: {
     					user: process.env.SENDGRID_USERNAME,
     					pass: process.env.SENDGRID_PASSWORD
-					}),
+					}}),
 					userName = (req.body.full_name).split(" "),
 					message = {
 						from: '"Countly"',

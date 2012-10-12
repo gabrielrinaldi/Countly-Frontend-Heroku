@@ -7,7 +7,7 @@
 	countlyCommon.DEBUG = false;
 	countlyCommon.ACTIVE_APP_KEY = 0;
 	countlyCommon.ACTIVE_APP_ID = 0;
-	countlyCommon.READ_API_URL = "http://localhost/o";
+	countlyCommon.READ_API_URL = "http://your_api_server/o";
 	countlyCommon.DASHBOARD_REFRESH_MS = 10000;
 	countlyCommon.DASHBOARD_IDLE_MS = 30000;
 	countlyCommon.GRAPH_COLORS = ["#88BBC8", "#ED8662", "#A0ED62", "#869BD5", "#F7B05A", "#C8A788", "#A2C025", "#DFB114", "#DD770C", "#D35417", "#B93629", "#9A1B2F"];

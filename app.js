@@ -306,14 +306,14 @@ app.post('/forgot', function(req, res, next) {
 				countlyDb.collection('password_reset').insert({"prid": prid, "user_id": member._id, "timestamp": timestamp}, {safe: true}, function(err, password_reset){
 					
 					var transport = nodemailer.createTransport("SMTP", {
-						host: "smtp.sendgrid.net",
+						service: "SendGrid",
     					auth: {
         					user: process.env.SENDGRID_USERNAME,
         					pass: process.env.SENDGRID_PASSWORD
     					}}),
 						userName = (member.full_name).split(" "),
 						message = {
-							from: '"Countly"',
+							from: process.env.SENDGRID_SENDER,
 							to: req.body.email,
 							subject: 'Countly Account - Password Reset',
 							html:'Hello '+ userName[0] +',<br/><br/>'+
@@ -743,14 +743,14 @@ app.post('/users/create', function(req, res, next) {
 		countlyDb.collection('members').insert(newUser, {safe: true}, function(err, user) {
 			if (user && !err) {
 				var transport = nodemailer.createTransport("SMTP", {
-					host: "smtp.sendgrid.net",
+					service: "SendGrid",
 					auth: {
     					user: process.env.SENDGRID_USERNAME,
     					pass: process.env.SENDGRID_PASSWORD
 					}}),
 					userName = (req.body.full_name).split(" "),
 					message = {
-						from: '"Countly"',
+						from: process.env.SENDGRID_SENDER,
 						to: req.body.email,
 						subject: 'Your Countly Account',
 						html:'Hello '+ userName[0] +',<br/><br/>'+
@@ -856,14 +856,14 @@ app.post('/users/update', function(req, res, next) {
 			
 			if (sendNotificationEmail) {		
 				var transport = nodemailer.createTransport("SMTP", {
-					host: "smtp.sendgrid.net",
+					service: "SendGrid",
 					auth: {
     					user: process.env.SENDGRID_USERNAME,
     					pass: process.env.SENDGRID_PASSWORD
 					}}),
 					userName = (req.body.full_name).split(" "),
 					message = {
-						from: '"Countly"',
+						from: process.env.SENDGRID_SENDER,
 						to: req.body.email,
 						subject: 'Countly Account - Password Change',
 						html:'Hello '+ userName[0] +',<br/><br/>'+

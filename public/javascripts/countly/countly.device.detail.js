@@ -127,7 +127,7 @@
 		var osVersions = countlyCommon.extractBarData(_deviceDetailsDb, _os_versions, countlyDeviceDetails.clearDeviceDetailsObject);
 		
 		for (var i = 0; i < osVersions.length; i++) {
-			osVersions[i].name = osVersions[i].name.replace(/:/g, ".").replace(/i/g, "iOS ").replace(/a/g, "Android ");
+			osVersions[i].name = osVersions[i].name.replace(/:/g, ".").replace(/i/g, "iOS ").replace(/m/g, "MAC ").replace(/a/g, "Android ");
 		}
 		
 		return osVersions;
@@ -153,7 +153,7 @@
 		
 		if (oSVersionData.chartData) {
 			for (var i = 0; i < oSVersionData.chartData.length; i++) {			
-				oSVersionData.chartData[i].os_version = oSVersionData.chartData[i].os_version.replace(/:/g, ".").replace(/i/g, "iOS ").replace(/a/g, "Android ");
+				oSVersionData.chartData[i].os_version = oSVersionData.chartData[i].os_version.replace(/:/g, ".").replace(/i/g, "iOS ").replace(/m/g, "MAC ").replace(/a/g, "Android ");
 				
 				if (oSVersionData.chartData[i].os_version.indexOf(osSegmentation) == -1) {
 					delete oSVersionData.chartData[i];

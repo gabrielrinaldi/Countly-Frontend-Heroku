@@ -11,10 +11,12 @@ Below you can find Countly SDK repositories;
 
 1. Configure the [Countly API Server](https://github.com/gabrielrinaldi/Countly-API-Heroku) first
 2. Create a Heroku server (Cedar)
-3. Configure this repository to push to Heroku
-4. Run `heroku config:add COUNTLYDB=Your COUNTLYDB from the API server`
-5. Change server on countly.common.js (`countlyCommon.READ_API_URL = "http://your_api_server/o"`)
-6. Push to Heroku and you are done
+3. Add [SendGrid add-on](https://addons.heroku.com/sendgrid) by running `heroku addons:add sendgrid:starter`
+4. Run `heroku config:add SENDGRID_SENDER=example@example.com`
+5. Configure this repository to push to Heroku
+6. Run `heroku config:add COUNTLYDB=Your COUNTLYDB from the API server`
+7. Change server on countly.common.js (`countlyCommon.READ_API_URL = "http://your_api_server/o"`)
+8. Push to Heroku and you are done
 
 I am using S3 now for handling app icons. You have to setup your keys for it to work:
 

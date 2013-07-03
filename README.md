@@ -1,15 +1,21 @@
 ##What's Countly?
-Countly is an innovative, real-time, open source mobile analytics application. It collects data from mobile phones, and visualizes this information to analyze mobile application usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, and mobile SDK that sends this data (for iOS & Android).
+
+Countly is an innovative, real-time, open source mobile analytics application. It collects data from mobile phones, and visualizes this information to analyze mobile application usage and end-user behavior. There are two parts of Countly: the server that collects and analyzes data, and mobile SDK that sends this data.
 
 Below you can find Countly SDK repositories;
 
-- [Countly API Server (Countly-API)](https://github.com/gabrielrinaldi/Countly-API-Heroku)
-- [Countly Android SDK (countly-sdk-android)](https://github.com/Countly/countly-sdk-android)
-- [Countly iOS SDK (countly-sdk-ios)](https://github.com/Countly/countly-sdk-ios)
+- [API Server (Countly-API)](https://github.com/gabrielrinaldi/Countly-API-Heroku)
+- [Android SDK (countly-sdk-android)](https://github.com/Countly/countly-sdk-android)
+- [iOS SDK (countly-sdk-ios)](https://github.com/Countly/countly-sdk-ios)
+- [ActionScript 3 SDK (countly-sdk-as3)](https://github.com/Countly/countly-sdk-as3)
+- [Windows Phone SDK (countly-sdk-windows-phone)](https://github.com/Countly/countly-sdk-windows-phone)
+- [Blackberry WebWorks SDK (countly-sdk-blackberry-webworks)](https://github.com/Countly/countly-sdk-blackberry-webworks)
+- [Icenium and Phonegap SDK (countly-sdk-js)](https://github.com/Countly/countly-sdk-js)
+- [Unity SDK (countly-sdk-unity)](https://github.com/Countly/countly-sdk-unity)
 
 ##How do I install Countly Frontend Server on Heroku?
 
-1. Configure the [Countly API Server](https://github.com/gabrielrinaldi/Countly-API-Heroku) first
+1. Configure the [API Server](https://github.com/gabrielrinaldi/Countly-API-Heroku) first
 2. Create a Heroku server (Cedar)
 3. Add [SendGrid add-on](https://addons.heroku.com/sendgrid) by running `heroku addons:add sendgrid:starter`
 4. Run `heroku config:add SENDGRID_SENDER=example@example.com`
@@ -35,17 +41,15 @@ Countly dashboard that runs on express server.
 ####2. frontend/express/public/javascripts/countly
 Contains seperate  helper js files for each data visualization. For example `countly.session.js` is responsible for calculating session related metrics and interacts with `api/api.js` to retrieve data from the sessions collection.
 
-##Which mobile operating systems are supported?
-Countly offers integration with world's two leading smartphones, Android and iOS.
-
 ##How can I help you with your efforts?
+
 Glad you asked. We need ideas, feedbacks and constructive comments. All your suggestions will be taken care with upmost importance.
 
 My [Twitter](http://twitter.com/gabriel_rinaldi)
 
 Countly is also on [Twitter](http://twitter.com/gocountly) (Original) and [Facebook](http://www.facebook.com/Countly), if you would like to keep up with their fast progress!
 
-##Home
+##Countly
 
 [http://count.ly](http://count.ly "Countly")
 

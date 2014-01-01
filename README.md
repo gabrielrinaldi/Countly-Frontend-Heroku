@@ -56,3 +56,6 @@ Countly is also on [Twitter](http://twitter.com/gocountly) (Original) and [Faceb
 ##Community & support
 
 [http://support.count.ly](http://support.count.ly "Countly Support")
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/gabrielrinaldi/countly-frontend-heroku/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
